@@ -61,7 +61,7 @@ export default function Checkout({ cartData, setCart, cartLoading }) {
           <div>
             {cartData.map((item) => {
               return (
-                <CheckoutCard key={item.productId} product={item} />
+                <CheckoutCard key={item.productId} setCart={setCart} item={item} />
               )
             })}
           </div>
