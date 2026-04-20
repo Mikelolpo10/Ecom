@@ -1,4 +1,4 @@
-export default function useCartQuantity(cart) {
+export default function cartQuantity(cart) {
   let total = 0
 
   cart.forEach((product) => {

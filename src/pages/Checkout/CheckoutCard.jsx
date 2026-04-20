@@ -1,6 +1,17 @@
+import axios from 'axios'
+import { useQuery } from '@tanstack/react-query'
 import convertCents from '../../utils/convertCents.js'
 
-export default function CheckoutCard({setCart, item}) {
+export default function CheckoutCard({cart, dispatch, item}) {
+  const deleteItem = async () => {
+    try {
+      await axios.delete(`http://localhost:3000/api/cart-items/${item.productId}`)
+      dispatch({ type: "DELETE_PRODUCT", payload: item.productId })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  
   return (
     <div className="border border-[rgb(222,222,222)] rounded p-4 mb-3">
       <div className="text-[rgb(25,135,84)] font-bold text-[19px] mt-[1.25px] mb-5.5">
@@ -28,7 +39,7 @@ export default function CheckoutCard({setCart, item}) {
             <span className="ml-0.75 text-[rgb(0,113,133)] cursor-pointer hover:text-[rgb(199,81,31)]">
               Update
             </span>
-            <span className="ml-0.75 text-[rgb(0,113,133)] cursor-pointer hover:text-[rgb(199,81,31)]">
+            <span onClick={deleteItem} className="ml-0.75 text-[rgb(0,113,133)] cursor-pointer hover:text-[rgb(199,81,31)]">
               Delete
             </span>
           </div>

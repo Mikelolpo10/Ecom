@@ -3,11 +3,11 @@ import { useState } from 'react'
 import CheckoutCard from './CheckoutCard.jsx'
 import cartQuantity from '../../utils/cartQuantity.js'
 
-export default function Checkout({ cartData, setCart, cartLoading }) {
-  const [totalItem, setTotalItem] = useState(cartQuantity(cartData))
+export default function Checkout({ cart, dispatch, cartLoading }) {
+  const totalItem = cartQuantity(cart)
   
   if (cartLoading) return <h1>LOADING CART DATA</h1>
-  console.log(cartData)
+  console.log(cart)
 
   return (
     <>
@@ -59,9 +59,9 @@ export default function Checkout({ cartData, setCart, cartLoading }) {
 
         <div className="grid grid-cols-[1fr_350px] gap-x-3 items-start max-[1000px]:grid-cols-1">
           <div>
-            {cartData.map((item) => {
+            {cart.map((item) => {
               return (
-                <CheckoutCard key={item.productId} setCart={setCart} item={item} />
+                <CheckoutCard key={item.productId} dispatch={dispatch} item={item} />
               )
             })}
           </div>

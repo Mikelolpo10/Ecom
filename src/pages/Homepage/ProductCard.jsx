@@ -2,14 +2,14 @@ import axios from 'axios'
 import { use, useState } from 'react'
 import convertCents from '../../utils/convertCents'
 
-export default function ProductCard({ cart, setCart, product }) {
+export default function ProductCard({ cart, dispatch, product }) {
   const [quantity, setQuantity] = useState(1)
-  
+
   const selectQuantity = (e) => {
     const quantitySelected = Number(e.target.value)
     setQuantity(quantitySelected)
   }
-  
+
   const addItem = async () => {
     try {
       await axios.post('http://localhost:3000/api/cart-items', {
@@ -23,14 +23,9 @@ export default function ProductCard({ cart, setCart, product }) {
     const existingItem = cart.find(item => item.productId === product.id)
 
     if (existingItem) {
-      const newCart = cart.map((item) =>
-        item.productId === product.id
-          ? { ...item, quantity: item.quantity + quantity }
-          : item
-      )
-      setCart(newCart)
+      dispatch({ type: "ADD_EXISTING_PRODUCT", payload: { productId: product.id, quantity: quantity }})
     } else {
-      setCart([...cart, { productId: product.id, quantity: 1 }])
+      dispatch({ type: "NEW_LOAD", payload: {product: product, quantity: quantity}})
     }
   }
 
