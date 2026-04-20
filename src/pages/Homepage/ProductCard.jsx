@@ -1,12 +1,20 @@
 import axios from 'axios'
+import { use, useState } from 'react'
 import convertCents from '../../utils/convertCents'
 
 export default function ProductCard({ cart, setCart, product }) {
+  const [quantity, setQuantity] = useState(1)
+  
+  const selectQuantity = (e) => {
+    const quantitySelected = Number(e.target.value)
+    setQuantity(quantitySelected)
+  }
+  
   const addItem = async () => {
     try {
       await axios.post('http://localhost:3000/api/cart-items', {
         productId: product.id,
-        quantity: 1,
+        quantity: quantity,
       })
     } catch (err) {
       console.log(err)
@@ -17,7 +25,7 @@ export default function ProductCard({ cart, setCart, product }) {
     if (existingItem) {
       const newCart = cart.map((item) =>
         item.productId === product.id
-          ? { ...item, quantity: item.quantity + 1 }
+          ? { ...item, quantity: item.quantity + quantity }
           : item
       )
       setCart(newCart)
@@ -59,7 +67,7 @@ export default function ProductCard({ cart, setCart, product }) {
       </div>
 
       <div className="mb-4.25">
-        <select className="border border-gray-300 rounded px-2 py-1">
+        <select value={quantity} onChange={selectQuantity} className="border border-gray-300 rounded px-2 py-1">
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
