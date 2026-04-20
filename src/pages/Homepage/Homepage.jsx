@@ -4,7 +4,7 @@ import Header from '@components/header.jsx'
 import convertCents from '../../utils/convertCents'
 import { products } from '../../data/products'
 
-export default function Homepage() {
+export default function Homepage(cart) {
   const {data, isPending, error} = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
@@ -16,6 +16,8 @@ export default function Homepage() {
       }
     }
   })
+
+  function handleCart() {}
 
   if (error) return <h1>ERROR DATA</h1>
 

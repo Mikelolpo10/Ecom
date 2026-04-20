@@ -1,3 +1,5 @@
+import axios from 'axios'
+import { useQuery } from '@tanstack/react-query'
 import { Routes, Route } from 'react-router'
 import Homepage from './pages/Homepage/homepage'
 import Orders from './pages/Orders/Orders.jsx'
@@ -7,20 +9,32 @@ import './index.css'
 import './App.css'
 
 function App() {
+  const cartQuery = useQuery({
+    queryKey: 'cart',
+    queryFn: async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/api/cart-items')
+        return res.data
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  }) 
+
   return (
     <>
       <Routes>
         <Route
           index
-          element={<Homepage />}
+          element={<Homepage cart={cartQuery}/>}
         />
         <Route 
           path='/orders'
-          element={<Orders />}
+          element={<Orders cart={cartQuery}/>}
         />
         <Route 
           path='/checkout'
-          element={<Checkout />}
+          element={<Checkout cart={cartQuery}/>}
         />
         <Route 
           path='/tracking'
