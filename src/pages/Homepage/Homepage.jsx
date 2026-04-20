@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import Header from '@components/header.jsx'
 import ProductCard from './ProductCard'
 
-export default function Homepage({ cart, cartLoading }) {
+export default function Homepage({ cart, setCart, cartLoading }) {
   const { data: products, isPending, error } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
@@ -22,13 +22,13 @@ export default function Homepage({ cart, cartLoading }) {
 
   return (
     <>
-      <Header />
+      <Header cart={cart}/>
 
       <div className="mt-15">
         <div className="grid grid-cols-1 min-[450px]:grid-cols-2 min-[575px]:grid-cols-2 min-[800px]:grid-cols-3 min-[1000px]:grid-cols-4 min-[1300px]:grid-cols-5 min-[1600px]:grid-cols-6 min-[2000px]:grid-cols-7 min-[2001px]:grid-cols-8">
           {products.map((product) => {
             return (
-              <ProductCard key={product.id} product={product}/>
+              <ProductCard key={product.id} cart={cart} setCart={setCart} product={product}/>
             )
           })}
         </div>

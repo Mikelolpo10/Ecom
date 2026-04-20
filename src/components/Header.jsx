@@ -1,7 +1,24 @@
 import { NavLink } from 'react-router'
+import { useState, useEffect } from 'react'
 import './Header.css'
 
-export default function Header() {
+export default function Header({ cart }) {
+  const [totalItem, setTotalItem] = useState(0)
+  
+  const cartQuantity = () => {
+    let total = 0
+
+    cart.forEach((product) => {
+      total += product.quantity  
+    })
+
+    setTotalItem(total)
+  }
+
+  useEffect(() => {
+    cartQuantity()
+  }, [cart])
+
   return (
     <>
       <div className="header">
@@ -27,7 +44,7 @@ export default function Header() {
 
           <NavLink className="cart-link header-link" to="/checkout">
             <img className="cart-icon" src="./images/icons/cart-icon.png" />
-            <div className="cart-quantity">3</div>
+            <div className="cart-quantity">{totalItem}</div>
             <div className="cart-text">Cart</div>
           </NavLink>
         </div>

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import convertCents from '../../utils/convertCents'
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ cart, setCart, product }) {
   const addItem = async () => {
     try {
       await axios.post('http://localhost:3000/api/cart-items', {
@@ -10,6 +10,19 @@ export default function ProductCard({ product }) {
       })
     } catch (err) {
       console.log(err)
+    }
+
+    const existingItem = cart.find(item => item.productId === product.id)
+
+    if (existingItem) {
+      const newCart = cart.map((item) =>
+        item.productId === product.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      )
+      setCart(newCart)
+    } else {
+      setCart([...cart, { productId: product.id, quantity: 1 }])
     }
   }
 
