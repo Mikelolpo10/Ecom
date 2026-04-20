@@ -9,8 +9,8 @@ import './index.css'
 import './App.css'
 
 function App() {
-  const cartQuery = useQuery({
-    queryKey: 'cart',
+  const { data: cart, isLoading: cartLoading } = useQuery({
+    queryKey: ['cart'],
     queryFn: async () => {
       try {
         const res = await axios.get('http://localhost:3000/api/cart-items')
@@ -26,15 +26,15 @@ function App() {
       <Routes>
         <Route
           index
-          element={<Homepage cart={cartQuery}/>}
+          element={<Homepage cart={cart} cartLoading={cartLoading}/>}
         />
         <Route 
           path='/orders'
-          element={<Orders cart={cartQuery}/>}
+          element={<Orders cart={cart} cartLoading={cartLoading}/>}
         />
         <Route 
           path='/checkout'
-          element={<Checkout cart={cartQuery}/>}
+          element={<Checkout cart={cart} cartLoading={cartLoading}/>}
         />
         <Route 
           path='/tracking'
