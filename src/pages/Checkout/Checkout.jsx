@@ -1,221 +1,99 @@
 import { NavLink, Link } from 'react-router'
-import './CheckoutHeader.css'
-import './Checkout.css'
+import CheckoutCard from './CheckoutCard.jsx'
 
-export default function Checkout() {
+export default function Checkout({ cartData, setCart, cartLoading }) {
+  if (cartLoading) return <h1>LOADING CART DATA</h1>
+
   return (
     <>
       <title>Checkout</title>
 
-      <div className="checkout-header">
-        <div className="header-content">
-          <div className="checkout-header-left-section">
+      {/* Checkout Header */}
+      <div className="fixed top-0 left-0 right-0 z-1000 h-60px bg-white flex justify-center px-30px">
+        <div className="w-full max-w-275 flex items-center">
+          {/* Left Section */}
+          <div className="w-50 max-[575px]:w-auto">
             <NavLink to="/">
-              <img className="logo" src="images/logo.png" />
-              <img className="mobile-logo" src="images/mobile-logo.png" />
+              <img
+                className="h-6.5 mt-0 max-[575px]:hidden"
+                src="images/logo.png"
+                alt="Logo"
+              />
+              <img
+                className="hidden max-[575px]:inline-block max-[575px]:h-6.5"
+                src="images/mobile-logo.png"
+                alt="Mobile Logo"
+              />
             </NavLink>
           </div>
 
-          <div className="checkout-header-middle-section">
-            Checkout (<Link className="return-to-home-link"
-              to="/">3 items</Link>)
+          {/* Middle Section */}
+          <div className="flex-1 shrink-0 text-center text-[22px] font-medium flex justify-center max-[1000px]:text-[20px] max-[1000px]:mr-15 max-[575px]:mr-[1.25px]">
+            Checkout (<Link
+              className="text-[rgb(25,135,84)] no-underline cursor-pointer max-[1000px]:text-[20px]"
+              to="/"
+            >3 items</Link>)
           </div>
 
-          <div className="checkout-header-right-section">
-            <img src="images/icons/checkout-lock-icon.png" />
+          {/* Right Section */}
+          <div className="text-right w-50 flex items-center justify-end max-[1000px]:w-auto">
+            <img
+              className="h-8"
+              src="images/icons/checkout-lock-icon.png"
+              alt="Lock"
+            />
           </div>
         </div>
       </div>
 
-      <div className="checkout-page">
-        <div className="page-title">Review your order</div>
+      {/* Checkout Page */}
+      <div className="max-w-275 px-7.5 mt-35 mb-25 mx-auto">
+        <div className="font-bold text-[22px] mb-[px-4.5]">
+          Review your order
+        </div>
 
-        <div className="checkout-grid">
-          <div className="order-summary">
-            <div className="cart-item-container">
-              <div className="delivery-date">
-                Delivery date: Tuesday, June 21
+        <div className="grid grid-cols-[1fr_350px] gap-x-3 items-start max-[1000px]:grid-cols-1">
+          <div>
+            {cartData.map((item) => {
+              return (
+                <CheckoutCard key={item.productId} product={item}/>
+              )
+            })}
+            {/* Payment Summary */}
+            <div className="border border-[rgb(222,222,222)] rounded px-[px-4.5] pt-[px-4.5] pb-[1.25px] max-[1000px]:row-1 max-[1000px]:mb-3">
+              <div className="font-bold text-lg mb-3">
+                Payment Summary
               </div>
 
-              <div className="cart-item-details-grid">
-                <img className="product-image"
-                  src="images/products/athletic-cotton-socks-6-pairs.jpg" />
-
-                <div className="cart-item-details">
-                  <div className="product-name">
-                    Black and Gray Athletic Cotton Socks - 6 Pairs
-                  </div>
-                  <div className="product-price">
-                    $10.90
-                  </div>
-                  <div className="product-quantity">
-                    <span>
-                      Quantity: <span className="quantity-label">2</span>
-                    </span>
-                    <span className="update-quantity-link link-primary">
-                      Update
-                    </span>
-                    <span className="delete-quantity-link link-primary">
-                      Delete
-                    </span>
-                  </div>
-                </div>
-
-                <div className="delivery-options">
-                  <div className="delivery-options-title">
-                    Choose a delivery option:
-                  </div>
-                  <div className="delivery-option">
-                    <input type="radio" checked
-                      className="delivery-option-input"
-                      name="delivery-option-1" />
-                    <div>
-                      <div className="delivery-option-date">
-                        Tuesday, June 21
-                      </div>
-                      <div className="delivery-option-price">
-                        FREE Shipping
-                      </div>
-                    </div>
-                  </div>
-                  <div className="delivery-option">
-                    <input type="radio"
-                      className="delivery-option-input"
-                      name="delivery-option-1" />
-                    <div>
-                      <div className="delivery-option-date">
-                        Wednesday, June 15
-                      </div>
-                      <div className="delivery-option-price">
-                        $4.99 - Shipping
-                      </div>
-                    </div>
-                  </div>
-                  <div className="delivery-option">
-                    <input type="radio"
-                      className="delivery-option-input"
-                      name="delivery-option-1" />
-                    <div>
-                      <div className="delivery-option-date">
-                        Monday, June 13
-                      </div>
-                      <div className="delivery-option-price">
-                        $9.99 - Shipping
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="cart-item-container">
-              <div className="delivery-date">
-                Delivery date: Wednesday, June 15
+              <div className="grid grid-cols-[1fr_auto] text-[15px] mb-2.25">
+                <div>Items (3):</div>
+                <div className="text-right">$42.75</div>
               </div>
 
-              <div className="cart-item-details-grid">
-                <img className="product-image"
-                  src="images/products/intermediate-composite-basketball.jpg" />
-
-                <div className="cart-item-details">
-                  <div className="product-name">
-                    Intermediate Size Basketball
-                  </div>
-                  <div className="product-price">
-                    $20.95
-                  </div>
-                  <div className="product-quantity">
-                    <span>
-                      Quantity: <span className="quantity-label">1</span>
-                    </span>
-                    <span className="update-quantity-link link-primary">
-                      Update
-                    </span>
-                    <span className="delete-quantity-link link-primary">
-                      Delete
-                    </span>
-                  </div>
-                </div>
-
-                <div className="delivery-options">
-                  <div className="delivery-options-title">
-                    Choose a delivery option:
-                  </div>
-
-                  <div className="delivery-option">
-                    <input type="radio" className="delivery-option-input"
-                      name="delivery-option-2" />
-                    <div>
-                      <div className="delivery-option-date">
-                        Tuesday, June 21
-                      </div>
-                      <div className="delivery-option-price">
-                        FREE Shipping
-                      </div>
-                    </div>
-                  </div>
-                  <div className="delivery-option">
-                    <input type="radio" checked className="delivery-option-input"
-                      name="delivery-option-2" />
-                    <div>
-                      <div className="delivery-option-date">
-                        Wednesday, June 15
-                      </div>
-                      <div className="delivery-option-price">
-                        $4.99 - Shipping
-                      </div>
-                    </div>
-                  </div>
-                  <div className="delivery-option">
-                    <input type="radio" className="delivery-option-input"
-                      name="delivery-option-2" />
-                    <div>
-                      <div className="delivery-option-date">
-                        Monday, June 13
-                      </div>
-                      <div className="delivery-option-price">
-                        $9.99 - Shipping
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div className="grid grid-cols-[1fr_auto] text-[15px] mb-2.25">
+                <div>Shipping &amp; handling:</div>
+                <div className="text-right">$4.99</div>
               </div>
-            </div>
-          </div>
 
-          <div className="payment-summary">
-            <div className="payment-summary-title">
-              Payment Summary
-            </div>
+              <div className="grid grid-cols-[1fr_auto] text-[15px] mb-2.25">
+                <div className="pt-[2.25px]">Total before tax:</div>
+                <div className="text-right pt-[2.25px] border-t border-[rgb(222,222,222)]">$47.74</div>
+              </div>
 
-            <div className="payment-summary-row">
-              <div>Items (3):</div>
-              <div className="payment-summary-money">$42.75</div>
-            </div>
+              <div className="grid grid-cols-[1fr_auto] text-[15px] mb-2.25">
+                <div>Estimated tax (10%):</div>
+                <div className="text-right">$4.77</div>
+              </div>
 
-            <div className="payment-summary-row">
-              <div>Shipping &amp; handling:</div>
-              <div className="payment-summary-money">$4.99</div>
-            </div>
+              <div className="grid grid-cols-[1fr_auto] text-[rgb(25,135,84)] font-bold text-lg border-t border-[rgb(222,222,222)] pt-[px-4.5]">
+                <div>Order total:</div>
+                <div className="text-right">$52.51</div>
+              </div>
 
-            <div className="payment-summary-row subtotal-row">
-              <div>Total before tax:</div>
-              <div className="payment-summary-money">$47.74</div>
+              <button className="w-full pt-3 pb-3 rounded-[1.25px] mt-5 mb-4.75 bg-[rgb(255,216,20)] border-none text-[15px] cursor-pointer hover:bg-[rgb(247,202,0)]">
+                Place your order
+              </button>
             </div>
-
-            <div className="payment-summary-row">
-              <div>Estimated tax (10%):</div>
-              <div className="payment-summary-money">$4.77</div>
-            </div>
-
-            <div className="payment-summary-row total-row">
-              <div>Order total:</div>
-              <div className="payment-summary-money">$52.51</div>
-            </div>
-
-            <button className="place-order-button button-primary">
-              Place your order
-            </button>
           </div>
         </div>
       </div>

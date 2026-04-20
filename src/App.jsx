@@ -23,6 +23,7 @@ function App() {
       }
     }
   }) 
+  console.log(cart)
 
   useEffect(() => {
     if (isSuccess) {
@@ -45,7 +46,7 @@ function App() {
         />
         <Route 
           path='/checkout'
-          element={<Checkout cart={cart} cartLoading={cartLoading}/>}
+          element={<Checkout cartData={cartData} setCart={setCart} cartLoading={cartLoading}/>}
         />
         <Route 
           path='/tracking'
