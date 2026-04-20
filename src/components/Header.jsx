@@ -1,20 +1,11 @@
 import { NavLink } from 'react-router'
 import { useState, useEffect } from 'react'
+import cartQuantity from '../utils/cartQuantity'
 import './Header.css'
 
 export default function Header({ cart }) {
-  const [totalItem, setTotalItem] = useState(0)
+  const [totalItem, setTotalItem] = useState(cartQuantity(cart))
   
-  const cartQuantity = () => {
-    let total = 0
-
-    cart.forEach((product) => {
-      total += product.quantity  
-    })
-
-    setTotalItem(total)
-  }
-
   useEffect(() => {
     cartQuantity()
   }, [cart])

@@ -16,14 +16,13 @@ function App() {
     queryKey: ['cart'],
     queryFn: async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/cart-items')
+        const res = await axios.get('http://localhost:3000/api/cart-items?expand=product')
         return res.data
       } catch (err) {
         console.log(err)
       }
     }
   }) 
-  console.log(cart)
 
   useEffect(() => {
     if (isSuccess) {

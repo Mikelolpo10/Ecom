@@ -1,8 +1,8 @@
 export default function CheckoutCard({product}) {
-  
+    
 
   return (
-    <div className="border border-[rgb(222,222,222)] rounded px-[px-4.5] py-[px-4.5] mb-3">
+    <div className="border border-[rgb(222,222,222)] rounded p-4 mb-3">
       <div className="text-[rgb(25,135,84)] font-bold text-[19px] mt-[1.25px] mb-5.5">
         Delivery date: Tuesday, June 21
       </div>
