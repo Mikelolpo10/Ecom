@@ -51,7 +51,7 @@ function App() {
     if (isSuccess) {
       dispatch({ type: "FIRST_LOAD", payload: cartData })
     }
-  }, [isSuccess])
+  }, [isSuccess, cartData])
 
   if (cartLoading || !cart) return <h1>CART IS BEING LOADED</h1>
 
