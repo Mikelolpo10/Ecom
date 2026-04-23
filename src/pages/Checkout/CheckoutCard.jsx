@@ -1,8 +1,23 @@
+import dayjs from 'dayjs'
 import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import convertCents from '../../utils/convertCents.js'
 
-export default function CheckoutCard({cart, dispatch, item}) {
+export default function CheckoutCard({ dispatch, item }) {
+  const [selectedDelivery, setSelectedDelivery] = useState('1')
+  const { data: deliveryQuery, isLoading } = useQuery({
+    queryKey: ['delivery-options'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/api/delivery-options?expand=estimatedDeliveryTime')
+        return res.data
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  })
+
   const deleteItem = async () => {
     try {
       await axios.delete(`http://localhost:3000/api/cart-items/${item.productId}`)
@@ -11,11 +26,16 @@ export default function CheckoutCard({cart, dispatch, item}) {
       console.log(err)
     }
   }
-  
+
+  if (isLoading) return <h1>FETCH DELIVERY OPTIONS</h1>
+
+  // Cari opsi yang dipilih
+  const selectedOption = deliveryQuery.find(opt => opt.id === selectedDelivery)
+
   return (
     <div className="border border-[rgb(222,222,222)] rounded p-4 mb-3">
       <div className="text-[rgb(25,135,84)] font-bold text-[19px] mt-[1.25px] mb-5.5">
-        Delivery date: Tuesday, June 21
+        Delivery date: {selectedOption ? dayjs(selectedOption.estimatedDeliveryTimeMs).format('dddd, MMMM D') : 'Loading...'}
       </div>
 
       <div className="grid grid-cols-[100px_1fr_1fr] gap-x-6.25 max-[1000px]:grid-cols-[100px_1fr] max-[1000px]:gap-y-7.5">
@@ -49,53 +69,29 @@ export default function CheckoutCard({cart, dispatch, item}) {
           <div className="font-bold mb-2.5">
             Choose a delivery option:
           </div>
-          <div className="grid grid-cols-[24px_1fr] mb-3 cursor-pointer">
-            <input
-              type="radio"
-              checked
-              className="mt-0.75 mr-[1.25px] mb-0 ml-0 cursor-pointer"
-              name="delivery-option-1"
-              readOnly
-            />
-            <div>
-              <div className="font-medium mb-0.75">
-                Tuesday, June 21
+          {deliveryQuery.map(option => {
+            let price = option.priceCents ? `$ ${convertCents(option.priceCents)} - Shipping` : "Free Shipping"
+            return (
+              <div key={option.id} className="grid grid-cols-[24px_1fr] mb-3 cursor-pointer">
+                <input
+                  type="radio"
+                  name={`delivery-option-${item.productId}`}
+                  value={option.id}
+                  checked={selectedDelivery === option.id}
+                  onChange={(e) => setSelectedDelivery(e.target.value)}
+                  className="mt-0.75 mr-[1.25px] mb-0 ml-0 cursor-pointer"
+                />
+                <div>
+                  <div className="font-medium mb-0.75">
+                    {dayjs(option.estimatedDeliveryTimeMs).format('dddd, MMMM D')}
+                  </div>
+                  <div className="text-[rgb(120,120,120)] text-[15px]">
+                    {price}
+                  </div>
+                </div>
               </div>
-              <div className="text-[rgb(120,120,120)] text-[15px]">
-                FREE Shipping
-              </div>
-            </div>
-          </div>
-          <div className="grid grid-cols-[24px_1fr] mb-3 cursor-pointer">
-            <input
-              type="radio"
-              className="mt-0.75 mr-[1.25px] mb-0 ml-0 cursor-pointer"
-              name="delivery-option-1"
-            />
-            <div>
-              <div className="font-medium mb-0.75">
-                Wednesday, June 15
-              </div>
-              <div className="text-[rgb(120,120,120)] text-[15px]">
-                $4.99 - Shipping
-              </div>
-            </div>
-          </div>
-          <div className="grid grid-cols-[24px_1fr] mb-3 cursor-pointer">
-            <input
-              type="radio"
-              className="mt-0.75 mr-[1.25px] mb-0 ml-0 cursor-pointer"
-              name="delivery-option-1"
-            />
-            <div>
-              <div className="font-medium mb-0.75">
-                Monday, June 13
-              </div>
-              <div className="text-[rgb(120,120,120)] text-[15px]">
-                $9.99 - Shipping
-              </div>
-            </div>
-          </div>
+            )
+          })}
         </div>
       </div>
     </div>

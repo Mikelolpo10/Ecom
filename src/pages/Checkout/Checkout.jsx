@@ -1,5 +1,4 @@
 import { NavLink, Link } from 'react-router'
-import { useState } from 'react'
 import CheckoutCard from './CheckoutCard.jsx'
 import cartQuantity from '../../utils/cartQuantity.js'
 
@@ -7,7 +6,6 @@ export default function Checkout({ cart, dispatch, cartLoading }) {
   const totalItem = cartQuantity(cart)
   
   if (cartLoading) return <h1>LOADING CART DATA</h1>
-  console.log(cart)
 
   return (
     <>
