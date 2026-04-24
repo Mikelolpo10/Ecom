@@ -1,10 +1,22 @@
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { NavLink, Link } from 'react-router'
 import CheckoutCard from './CheckoutCard.jsx'
-import cartQuantity from '../../utils/cartQuantity.js'
+import PaymentSummary from './PaymentSummary.jsx'
 
 export default function Checkout({ cart, dispatch, cartLoading }) {
-  const totalItem = cartQuantity(cart)
-  
+  const { data: payment, isLoading: paymentLoading } = useQuery({
+    queryKey: ['payment'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/api/payment-summary')
+        return res.data
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  })
+
   if (cartLoading) return <h1>LOADING CART DATA</h1>
 
   return (
@@ -35,7 +47,7 @@ export default function Checkout({ cart, dispatch, cartLoading }) {
             Checkout (<Link
               className="text-[rgb(25,135,84)] no-underline cursor-pointer max-[1000px]:text-[20px]"
               to="/"
-            >{totalItem} items</Link>)
+            >{payment ? payment.totalItems : '-'} items</Link>)
           </div>
 
           {/* Right Section */}
@@ -64,41 +76,7 @@ export default function Checkout({ cart, dispatch, cartLoading }) {
             })}
           </div>
 
-          {/* Payment Summary */}
-          <div className="border border-[rgb(222,222,222)] rounded p-4 pb-2 max-[1000px]:row-1 max-[1000px]:mb-3">
-            <div className="font-bold text-lg mb-3">
-              Payment Summary
-            </div>
-
-            <div className="grid grid-cols-[1fr_auto] text-[15px] mb-2.25">
-              <div>Items ({totalItem}):</div>
-              <div className="text-right">$42.75</div>
-            </div>
-
-            <div className="grid grid-cols-[1fr_auto] text-[15px] mb-2.25">
-              <div>Shipping &amp; handling:</div>
-              <div className="text-right">$4.99</div>
-            </div>
-
-            <div className="grid grid-cols-[1fr_auto] text-[15px] mb-2.25">
-              <div className="pt-[2.25px]">Total before tax:</div>
-              <div className="text-right pt-[2.25px] border-t border-[rgb(222,222,222)]">$47.74</div>
-            </div>
-
-            <div className="grid grid-cols-[1fr_auto] text-[15px] mb-2.25">
-              <div>Estimated tax (10%):</div>
-              <div className="text-right">$4.77</div>
-            </div>
-
-            <div className="grid grid-cols-[1fr_auto] text-[rgb(25,135,84)] font-bold text-lg border-t border-[rgb(222,222,222)] pt-[px-4.5]">
-              <div>Order total:</div>
-              <div className="text-right">$52.51</div>
-            </div>
-
-            <button className="w-full pt-3 pb-3 rounded-[1.25px] mt-5 mb-4.75 bg-[rgb(255,216,20)] border-none text-[15px] cursor-pointer hover:bg-[rgb(247,202,0)]">
-              Place your order
-            </button>
-          </div>
+          <PaymentSummary payment={payment} paymentLoading={paymentLoading} />
         </div>
       </div>
     </>

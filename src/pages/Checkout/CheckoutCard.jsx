@@ -29,7 +29,6 @@ export default function CheckoutCard({ dispatch, item }) {
 
   if (isLoading) return <h1>FETCH DELIVERY OPTIONS</h1>
 
-  // Cari opsi yang dipilih
   const selectedOption = deliveryQuery.find(opt => opt.id === selectedDelivery)
 
   return (
