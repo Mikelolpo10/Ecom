@@ -1,6 +1,13 @@
+import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import convertCents from "../../utils/convertCents";
 
-export default function PaymentSummary({ payment, paymentLoading }) {
+export default function PaymentSummary({ cart, dispatch, payment, paymentLoading }) {
+  const placeOrder = useMutation({
+    mutationFn: () => {axios.post('http://localhost:3000/api/orders')},
+    onSuccess: () => {dispatch({type: "RESET_CART"})}
+  })
+  
   if (paymentLoading) return <h1>Loading payment data</h1>
 
   return (
@@ -34,7 +41,7 @@ export default function PaymentSummary({ payment, paymentLoading }) {
         <div className="text-right">${convertCents(payment.totalCostCents)}</div>
       </div>
 
-      <button className="w-full pt-3 pb-3 rounded-[1.25px] mt-5 mb-4.75 bg-[rgb(255,216,20)] border-none text-[15px] cursor-pointer hover:bg-[rgb(247,202,0)]">
+      <button onClick={() => placeOrder.mutate()} className="w-full pt-3 pb-3 rounded-[1.25px] mt-5 mb-4.75 bg-[rgb(255,216,20)] border-none text-[15px] cursor-pointer hover:bg-[rgb(247,202,0)]">
         Place your order
       </button>
     </div>

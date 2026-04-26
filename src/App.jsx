@@ -39,6 +39,9 @@ function App() {
       case "DELETE_PRODUCT": {
         return state.filter(item => item.productId !== action.payload) 
       }
+      case "RESET_CART": {
+        return []
+      }     
       default: 
         return state
     }
@@ -53,7 +56,7 @@ function App() {
     }
   }, [isSuccess, cartData])
 
-  if (cartLoading || !cart) return <h1>CART IS BEING LOADED</h1>
+  if (cartLoading) return <h1>CART IS BEING LOADED</h1>
 
   return (
     <>
@@ -64,7 +67,7 @@ function App() {
         />
         <Route
           path='/orders'
-          element={<Orders cart={cart} cartLoading={cartLoading} />}
+          element={<Orders cart={cart} />}
         />
         <Route
           path='/checkout'

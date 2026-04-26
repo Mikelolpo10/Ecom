@@ -3,9 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { NavLink, Link } from 'react-router'
 import CheckoutCard from './CheckoutCard.jsx'
 import PaymentSummary from './PaymentSummary.jsx'
+import { useEffect } from "react";
 
 export default function Checkout({ cart, dispatch, cartLoading }) {
-  const { data: payment, isLoading: paymentLoading } = useQuery({
+  const { data: payment, isLoading: paymentLoading, refetch } = useQuery({
     queryKey: ['payment'],
     queryFn: async () => {
       try {
@@ -16,6 +17,10 @@ export default function Checkout({ cart, dispatch, cartLoading }) {
       }
     }
   })
+
+  useEffect(() => {
+    refetch()
+  }, [cart])
 
   if (cartLoading) return <h1>LOADING CART DATA</h1>
 
@@ -76,7 +81,7 @@ export default function Checkout({ cart, dispatch, cartLoading }) {
             })}
           </div>
 
-          <PaymentSummary payment={payment} paymentLoading={paymentLoading} />
+          <PaymentSummary cart={cart} dispatch={dispatch} payment={payment} paymentLoading={paymentLoading} />
         </div>
       </div>
     </>
