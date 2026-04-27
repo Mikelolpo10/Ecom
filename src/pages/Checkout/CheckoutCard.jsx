@@ -1,10 +1,12 @@
 import dayjs from 'dayjs'
 import axios from 'axios'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import convertCents from '../../utils/convertCents.js'
 
 export default function CheckoutCard({ dispatch, item }) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [quantity, setQuantity] = useState(item.quantity)
   const [selectedDelivery, setSelectedDelivery] = useState('1')
   const { data: deliveryQuery, isLoading } = useQuery({
     queryKey: ['delivery-options'],
@@ -17,6 +19,21 @@ export default function CheckoutCard({ dispatch, item }) {
       }
     }
   })
+
+  const mutateQuantity = useMutation({
+    mutationFn: async () => {
+      const res = await axios.put(`http://localhost:3000/api/cart-items/${item.productId}`, {quantity: Number(quantity)})
+      return res.data
+    },
+    onError: (err) => {
+      console.log(`Error on quantity mutation ${err}`)
+    }
+  })
+
+  const updateQuantity = async () => {
+    setIsEditing(!isEditing)
+    mutateQuantity.mutate()
+  }
 
   const deleteItem = async () => {
     try {
@@ -53,9 +70,19 @@ export default function CheckoutCard({ dispatch, item }) {
           </div>
           <div>
             <span>
-              Quantity: <span className="quantity-label">{item.quantity}</span>
+              Quantity:
+              {isEditing ?
+                <input
+                  type="number"
+                  name="quantity"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                  className="border-gray border w-10"
+                />
+                : <span className="quantity-label"> {quantity}</span>
+              }
             </span>
-            <span className="ml-0.75 text-[rgb(0,113,133)] cursor-pointer hover:text-[rgb(199,81,31)]">
+            <span onClick={() => isEditing ? updateQuantity({quantity}) : setIsEditing(!isEditing)} className="ml-0.75 text-[rgb(0,113,133)] cursor-pointer hover:text-[rgb(199,81,31)]">
               Update
             </span>
             <span onClick={deleteItem} className="ml-0.75 text-[rgb(0,113,133)] cursor-pointer hover:text-[rgb(199,81,31)]">
@@ -70,6 +97,7 @@ export default function CheckoutCard({ dispatch, item }) {
           </div>
           {deliveryQuery.map(option => {
             let price = option.priceCents ? `$ ${convertCents(option.priceCents)} - Shipping` : "Free Shipping"
+
             return (
               <div key={option.id} className="grid grid-cols-[24px_1fr] mb-3 cursor-pointer">
                 <input
