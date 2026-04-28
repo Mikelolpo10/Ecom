@@ -1,13 +1,17 @@
 import dayjs from 'dayjs'
 import axios from 'axios'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import convertCents from '../../utils/convertCents.js'
 
 export default function CheckoutCard({ dispatch, item }) {
+  const queryClient = useQueryClient()
   const [isEditing, setIsEditing] = useState(false)
   const [quantity, setQuantity] = useState(item.quantity)
-  const [selectedDelivery, setSelectedDelivery] = useState('1')
+  const [selectedDelivery, setSelectedDelivery] = useState(item.deliveryOptionId)
+
+
+  //MUTATION HOOK
   const { data: deliveryQuery, isLoading } = useQuery({
     queryKey: ['delivery-options'],
     queryFn: async () => {
@@ -20,15 +24,39 @@ export default function CheckoutCard({ dispatch, item }) {
     }
   })
 
+  const mutateDeliveryOption = useMutation({
+    mutationFn: async (value) => {
+      const res = await axios.put(`http://localhost:3000/api/cart-items/${item.productId}`, { deliveryOptionId: value })
+      return res.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] })
+      queryClient.invalidateQueries({ queryKey: ['payment-summary'] })
+    },
+    onError: (err) => {
+      console.log(`Error on delivery option mutation ${err}`)
+    }
+  })
+
   const mutateQuantity = useMutation({
     mutationFn: async () => {
-      const res = await axios.put(`http://localhost:3000/api/cart-items/${item.productId}`, {quantity: Number(quantity)})
+      const res = await axios.put(`http://localhost:3000/api/cart-items/${item.productId}`, { quantity: Number(quantity) })
       return res.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] })
+      queryClient.invalidateQueries({ queryKey: ['payment-summary'] })
     },
     onError: (err) => {
       console.log(`Error on quantity mutation ${err}`)
     }
   })
+
+
+  //EVENT HANDLER
+  const updateDeliveryOption = async (value) => {
+    mutateDeliveryOption.mutate(value)
+  }
 
   const updateQuantity = async () => {
     setIsEditing(!isEditing)
@@ -82,7 +110,7 @@ export default function CheckoutCard({ dispatch, item }) {
                 : <span className="quantity-label"> {quantity}</span>
               }
             </span>
-            <span onClick={() => isEditing ? updateQuantity({quantity}) : setIsEditing(!isEditing)} className="ml-0.75 text-[rgb(0,113,133)] cursor-pointer hover:text-[rgb(199,81,31)]">
+            <span onClick={() => isEditing ? updateQuantity({ quantity }) : setIsEditing(!isEditing)} className="ml-0.75 text-[rgb(0,113,133)] cursor-pointer hover:text-[rgb(199,81,31)]">
               Update
             </span>
             <span onClick={deleteItem} className="ml-0.75 text-[rgb(0,113,133)] cursor-pointer hover:text-[rgb(199,81,31)]">
@@ -105,7 +133,10 @@ export default function CheckoutCard({ dispatch, item }) {
                   name={`delivery-option-${item.productId}`}
                   value={option.id}
                   checked={selectedDelivery === option.id}
-                  onChange={(e) => setSelectedDelivery(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedDelivery(e.target.value)
+                    updateDeliveryOption(e.target.value)
+                  }}
                   className="mt-0.75 mr-[1.25px] mb-0 ml-0 cursor-pointer"
                 />
                 <div>

@@ -1,10 +1,26 @@
+import axios from 'axios'
+import { useQuery } from '@tanstack/react-query'
 import Header from '@components/Header'
 import './Orders.css'
 
-export default function Orders() {
+export default function Orders({cart}) {
+  const {data, isLoading} = useQuery({
+    queryKey: ["orders"],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/api/orders')        
+        return res.data
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  })
+
+  if (isLoading) return <h1>Loading cart</h1>
+  
   return (
     <>
-      <Header />
+      <Header cart={cart}/>
 
       <div className="orders-page">
         <div className="page-title">Your Orders</div>
