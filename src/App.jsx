@@ -67,7 +67,7 @@ function App() {
         />
         <Route
           path='/orders'
-          element={<Orders cart={cart} />}
+          element={<Orders cart={cart} dispatch={dispatch} />}
         />
         <Route
           path='/checkout'

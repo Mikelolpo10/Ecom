@@ -6,7 +6,7 @@ import Header from '@components/Header'
 import convertCents from '../../utils/convertCents.js'
 import { Fragment } from 'react'
 
-export default function Orders({ cart }) {
+export default function Orders({ cart, dispatch }) {
   const { data, isLoading } = useQuery({
     queryKey: ["orders"],
     queryFn: async () => {
@@ -14,6 +14,26 @@ export default function Orders({ cart }) {
       return res.data
     }
   })
+
+  const addItem = async (product) => {
+    console.log(product)
+    try {
+      await axios.post('http://localhost:3000/api/cart-items', {
+        productId: product.id,
+        quantity: 1,
+      })
+    } catch (err) {
+      console.log(err)
+    }
+
+    const existingItem = cart.find(item => item.productId === product.id)
+
+    if (existingItem) {
+      dispatch({ type: "ADD_EXISTING_PRODUCT", payload: { productId: product.id, quantity: 1 }})
+    } else {
+      dispatch({ type: "NEW_LOAD", payload: {product: product, quantity: 1}})
+    }
+  }
 
   if (isLoading) return <h1>Loading cart</h1>
 
@@ -88,7 +108,7 @@ export default function Orders({ cart }) {
                         Quantity: {item.quantity}
                       </div>
 
-                      <button className="flex items-center justify-center w-35 h-9 text-[14px] rounded-md max-[800px]:mb-2.5 max-[450px]:w-full max-[450px]:mb-3.75 bg-green-700 text-white">
+                      <button onClick={() => addItem(item.product)} className="flex items-center justify-center w-35 h-9 text-[14px] rounded-md max-[800px]:mb-2.5 max-[450px]:w-full max-[450px]:mb-3.75 bg-green-700 text-white">
                         <img
                           className="w-5 mr-2.5"
                           src="images/icons/buy-again.png"
