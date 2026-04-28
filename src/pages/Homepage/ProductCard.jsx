@@ -87,7 +87,7 @@ export default function ProductCard({ cart, dispatch, product }) {
         Added
       </div>
 
-      <button onClick={() => addItem()} className="w-full py-2 h-8.5 mt-px bg-amber-300 hover:bg-amber-400 text-gray-900 rounded-full font-medium transition-colors">
+      <button onClick={addItem} className="w-full py-2 h-8.5 mt-px bg-amber-300 hover:bg-amber-400 text-gray-900 rounded-full font-medium transition-colors">
         Add to Cart
       </button>
     </div>
