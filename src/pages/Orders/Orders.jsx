@@ -1,160 +1,116 @@
+import dayjs from 'dayjs'
 import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router'
 import Header from '@components/Header'
-import './Orders.css'
+import convertCents from '../../utils/convertCents.js'
+import { Fragment } from 'react'
 
-export default function Orders({cart}) {
-  const {data, isLoading} = useQuery({
+export default function Orders({ cart }) {
+  const { data, isLoading } = useQuery({
     queryKey: ["orders"],
     queryFn: async () => {
-      try {
-        const res = await axios.get('http://localhost:3000/api/orders')        
-        return res.data
-      } catch (err) {
-        console.log(err)
-      }
+      const res = await axios.get('http://localhost:3000/api/orders?expand=products')
+      return res.data
     }
   })
 
   if (isLoading) return <h1>Loading cart</h1>
-  
+
   return (
     <>
-      <Header cart={cart}/>
+      <Header cart={cart} />
 
-      <div className="orders-page">
-        <div className="page-title">Your Orders</div>
+      <div className="max-w-212.5 mx-auto mt-22.5 mb-25 px-5">
+        <div className="font-bold text-[26px] mb-6.25">
+          Your Orders
+        </div>
 
-        <div className="orders-grid">
-          <div className="order-container">
+        <div className="grid grid-cols-1 gap-y-12.5">
+          {data.map((order) => (
+            <div key={order.id}>
 
-            <div className="order-header">
-              <div className="order-header-left-section">
-                <div className="order-date">
-                  <div className="order-header-label">Order Placed:</div>
-                  <div>August 12</div>
+              {/* HEADER */}
+              <div className="bg-white border border-gray-200 flex items-center justify-between px-6.25 py-5 rounded-t-md max-[575px]:flex-col max-[575px]:items-start max-[575px]:leading-5.75 max-[575px]:p-3.75">
+
+                <div className="flex shrink-0 max-[575px]:flex-col">
+                  <div className="mr-11.25 max-[575px]:mr-0 max-[575px]:grid max-[575px]:grid-cols-[auto_1fr]">
+                    <div className="font-bold">Order Placed:</div>
+                    <div>{dayjs(order.orderTimeMs).format('MMMM D')}</div>
+                  </div>
+
+                  <div className="mr-11.25 max-[575px]:mr-0 max-[575px]:grid max-[575px]:grid-cols-[auto_1fr]">
+                    <div className="font-bold">Total:</div>
+                    <div>${convertCents(order.totalCostCents)}</div>
+                  </div>
                 </div>
-                <div className="order-total">
-                  <div className="order-header-label">Total:</div>
-                  <div>$35.06</div>
+
+                <div className="shrink max-[575px]:grid max-[575px]:grid-cols-[auto_1fr]">
+                  <div className="font-bold">Order ID:</div>
+                  <div>{order.id}</div>
                 </div>
               </div>
 
-              <div className="order-header-right-section">
-                <div className="order-header-label">Order ID:</div>
-                <div>27cba69d-4c3d-4098-b42d-ac7fa62b7664</div>
+              {/* DETAILS */}
+              <div className="
+                grid 
+                grid-cols-[110px_1fr_220px] 
+                gap-x-8.75 gap-y-15
+                items-center
+                px-6.25 py-10
+                border border-gray-200 border-t-0
+                rounded-b-md
+                max-[800px]:grid-cols-[110px_1fr]
+                max-[800px]:gap-y-0
+                max-[800px]:pb-2
+                max-[450px]:grid-cols-1
+              ">
+                {order.products.map((item) => (
+                  <Fragment key={item.productId}>
+
+                    <div className="text-center max-[450px]:mb-6.25">
+                      <img
+                        src={item.product.image}
+                        className="max-w-27.5 max-h-27.5 max-[450px]:max-w-37.5 max-[450px]:max-h-37.5"
+                      />
+                    </div>
+
+                    <div>
+                      <div className="font-bold 1.25 max-[450px]:mb-2.5">
+                        {item.product.name}
+                      </div>
+
+                      <div className="mb-0.75">
+                        Arriving on: {dayjs(item.estimatedDeliveryTimeMs).format('MMMM D')}
+                      </div>
+
+                      <div className="mb-2 max-[450px]:mb-3.75">
+                        Quantity: {item.quantity}
+                      </div>
+
+                      <button className="flex items-center justify-center w-35 h-9 text-[14px] rounded-md max-[800px]:mb-2.5 max-[450px]:w-full max-[450px]:mb-3.75 bg-green-700 text-white">
+                        <img
+                          className="w-5 mr-2.5"
+                          src="images/icons/buy-again.png"
+                        />
+                        <span>Add to Cart</span>
+                      </button>
+                    </div>
+
+                    <div className="self-start max-[800px]:col-start-2 max-[800px]:mb-7.5 max-[450px]:col-auto max-[450px]:mb-17.5]">
+                      <Link to="/tracking">
+                        <button className="w-full text-[14px] p-2 border rounded-md max-[800px]:w-35 max-[450px]:w-full max-[450px]:p-3">
+                          Track package
+                        </button>
+                      </Link>
+                    </div>
+
+                  </Fragment>
+                ))}
               </div>
+
             </div>
-
-            <div className="order-details-grid">
-              <div className="product-image-container">
-                <img src="images/products/athletic-cotton-socks-6-pairs.jpg" />
-              </div>
-
-              <div className="product-details">
-                <div className="product-name">
-                  Black and Gray Athletic Cotton Socks - 6 Pairs
-                </div>
-                <div className="product-delivery-date">
-                  Arriving on: August 15
-                </div>
-                <div className="product-quantity">
-                  Quantity: 1
-                </div>
-                <button className="buy-again-button button-primary">
-                  <img className="buy-again-icon" src="images/icons/buy-again.png" />
-                  <span className="buy-again-message">Add to Cart</span>
-                </button>
-              </div>
-
-              <div className="product-actions">
-                <a href="tracking.html">
-                  <button className="track-package-button button-secondary">
-                    Track package
-                  </button>
-                </a>
-              </div>
-
-              <div className="product-image-container">
-                <img src="images/products/adults-plain-cotton-tshirt-2-pack-teal.jpg" />
-              </div>
-
-              <div className="product-details">
-                <div className="product-name">
-                  Adults Plain Cotton T-Shirt - 2 Pack
-                </div>
-                <div className="product-delivery-date">
-                  Arriving on: August 19
-                </div>
-                <div className="product-quantity">
-                  Quantity: 2
-                </div>
-                <button className="buy-again-button button-primary">
-                  <img className="buy-again-icon" src="images/icons/buy-again.png" />
-                  <span className="buy-again-message">Add to Cart</span>
-                </button>
-              </div>
-
-              <div className="product-actions">
-                <a href="tracking.html">
-                  <button className="track-package-button button-secondary">
-                    Track package
-                  </button>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div className="order-container">
-
-            <div className="order-header">
-              <div className="order-header-left-section">
-                <div className="order-date">
-                  <div className="order-header-label">Order Placed:</div>
-                  <div>June 10</div>
-                </div>
-                <div className="order-total">
-                  <div className="order-header-label">Total:</div>
-                  <div>$41.90</div>
-                </div>
-              </div>
-
-              <div className="order-header-right-section">
-                <div className="order-header-label">Order ID:</div>
-                <div>b6b6c212-d30e-4d4a-805d-90b52ce6b37d</div>
-              </div>
-            </div>
-
-            <div className="order-details-grid">
-              <div className="product-image-container">
-                <img src="images/products/intermediate-composite-basketball.jpg" />
-              </div>
-
-              <div className="product-details">
-                <div className="product-name">
-                  Intermediate Size Basketball
-                </div>
-                <div className="product-delivery-date">
-                  Arriving on: June 17
-                </div>
-                <div className="product-quantity">
-                  Quantity: 2
-                </div>
-                <button className="buy-again-button button-primary">
-                  <img className="buy-again-icon" src="images/icons/buy-again.png" />
-                  <span className="buy-again-message">Add to Cart</span>
-                </button>
-              </div>
-
-              <div className="product-actions">
-                <a href="tracking.html">
-                  <button className="track-package-button button-secondary">
-                    Track package
-                  </button>
-                </a>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </>
