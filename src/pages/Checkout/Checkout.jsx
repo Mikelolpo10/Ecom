@@ -14,8 +14,10 @@ export default function Checkout({ cart, dispatch, cartLoading }) {
         return res.data
       } catch (err) {
         console.log(err)
+        throw new Error
       }
-    }
+    },
+    retry: 3,
   })
 
   useEffect(() => {
@@ -74,9 +76,9 @@ export default function Checkout({ cart, dispatch, cartLoading }) {
 
         <div className="grid grid-cols-[1fr_350px] gap-x-3 items-start max-[1000px]:grid-cols-1">
           <div>
-            {cart.map((item, index) => {
+            {cart.map((item) => {
               return (
-                <CheckoutCard key={item.productId + index} dispatch={dispatch} item={item} />
+                <CheckoutCard key={item.productId} dispatch={dispatch} item={item} />
               )
             })}
           </div>
