@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { use, useState } from 'react'
+import { useState } from 'react'
 import convertCents from '../../utils/convertCents'
 
 export default function ProductCard({ cart, dispatch, product }) {
@@ -20,7 +20,9 @@ export default function ProductCard({ cart, dispatch, product }) {
       console.log(err)
     }
 
-    const existingItem = cart.find(item => item.productId === product.id)
+    const existingItem = cart.find(item => item.product.id === product.id)
+    console.log(cart)
+    console.log(existingItem ? true : false)
 
     if (existingItem) {
       dispatch({ type: "ADD_EXISTING_PRODUCT", payload: { productId: product.id, quantity: quantity }})

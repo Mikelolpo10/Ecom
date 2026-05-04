@@ -29,20 +29,23 @@ function App() {
       case "NEW_LOAD":
         return [...state, action.payload]
       case "ADD_EXISTING_PRODUCT": {
-        const newCart = state.map((item) =>
-          item.productId === action.payload.productId
-            ? { ...item, quantity: item.quantity + action.payload.quantity }
-            : item
-        )
-        return newCart
+        return state.map((item) => {
+          if (item.productId === action.payload.productId) {
+            return {
+              ...item,
+              quantity: item.quantity + (action.payload.quantity || 1)
+            }
+          }
+          return item
+        })
       }
       case "DELETE_PRODUCT": {
-        return state.filter(item => item.productId !== action.payload) 
+        return state.filter(item => item.productId !== action.payload)
       }
       case "RESET_CART": {
         return []
-      }     
-      default: 
+      }
+      default:
         return state
     }
   }
