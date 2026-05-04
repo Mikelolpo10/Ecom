@@ -26,7 +26,7 @@ export default function Orders({ cart, dispatch }) {
       console.log(err)
     }
 
-    const existingItem = cart.find(item => item.productId === product.id)
+    const existingItem = cart.find(item => item.product.id === product.id)
 
     if (existingItem) {
       dispatch({ type: "ADD_EXISTING_PRODUCT", payload: { productId: product.id, quantity: 1 }})
