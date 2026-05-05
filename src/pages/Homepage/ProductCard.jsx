@@ -21,8 +21,6 @@ export default function ProductCard({ cart, dispatch, product }) {
     }
 
     const existingItem = cart.find(item => item.product.id === product.id)
-    console.log(cart)
-    console.log(existingItem ? true : false)
 
     if (existingItem) {
       dispatch({ type: "ADD_EXISTING_PRODUCT", payload: { productId: product.id, quantity: quantity }})
