@@ -12,6 +12,7 @@ export default function Homepage({ cart, dispatch, cartLoading }) {
         return res.data
       } catch (err) {
         console.log(err)
+        throw err
       }
     }
   })

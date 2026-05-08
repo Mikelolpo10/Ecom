@@ -23,9 +23,9 @@ export default function ProductCard({ cart, dispatch, product }) {
     const existingItem = cart.find(item => item.product.id === product.id)
 
     if (existingItem) {
-      dispatch({ type: "ADD_EXISTING_PRODUCT", payload: { productId: product.id, quantity: quantity }})
+      dispatch({ type: "ADD_EXISTING_PRODUCT", payload: { productId: product.id, quantity: quantity } })
     } else {
-      dispatch({ type: "NEW_LOAD", payload: {product: product, quantity: quantity}})
+      dispatch({ type: "NEW_LOAD", payload: { product: product, quantity: quantity } })
     }
   }
 
@@ -87,7 +87,7 @@ export default function ProductCard({ cart, dispatch, product }) {
         Added
       </div>
 
-      <button onClick={addItem} className="w-full py-2 h-8.5 mt-px bg-amber-300 hover:bg-amber-400 text-gray-900 rounded-full font-medium transition-colors">
+      <button data-testid='add-to-cart-btn' onClick={addItem} className="w-full py-2 h-8.5 mt-px bg-amber-300 hover:bg-amber-400 text-gray-900 rounded-full font-medium transition-colors">
         Add to Cart
       </button>
     </div>
