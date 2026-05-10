@@ -1,7 +1,9 @@
 import dayjs from 'dayjs'
 import axios from 'axios'
-import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
+import useDeliveryOptions from '../../hooks/useDeliveryOptions.js'
+import useMutateDelivery from '../../hooks/useMutateDelivery.js'
 import convertCents from '../../utils/convertCents.js'
 
 export default function CheckoutCard({ dispatch, item }) {
@@ -10,33 +12,7 @@ export default function CheckoutCard({ dispatch, item }) {
   const [quantity, setQuantity] = useState(item.quantity)
   const [selectedDelivery, setSelectedDelivery] = useState(item.deliveryOptionId)
 
-
-  //MUTATION HOOK
-  const { data: deliveryQuery, isLoading } = useQuery({
-    queryKey: ['delivery-options'],
-    queryFn: async () => {
-      try {
-        const res = await axios.get('http://localhost:3000/api/delivery-options?expand=estimatedDeliveryTime')
-        return res.data
-      } catch (err) {
-        console.log(err)
-      }
-    }
-  })
-
-  const mutateDeliveryOption = useMutation({
-    mutationFn: async (value) => {
-      const res = await axios.put(`http://localhost:3000/api/cart-items/${item.productId}`, { deliveryOptionId: value })
-      return res.data
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] })
-      queryClient.invalidateQueries({ queryKey: ['payment-summary'] })
-    },
-    onError: (err) => {
-      console.log(`Error on delivery option mutation ${err}`)
-    }
-  })
+  const { data: deliveryQuery, isLoading } = useDeliveryOptions()
 
   const mutateQuantity = useMutation({
     mutationFn: async () => {
@@ -52,10 +28,10 @@ export default function CheckoutCard({ dispatch, item }) {
     }
   })
 
-
+  const mutateDelivery = useMutateDelivery(item.productId)
   //EVENT HANDLER
-  const updateDeliveryOption = async (value) => {
-    mutateDeliveryOption.mutate(value)
+  const updateDeliveryOption = async (option) => {
+    mutateDelivery.mutate(option)
   }
 
   const updateQuantity = async () => {

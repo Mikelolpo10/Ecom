@@ -23,7 +23,6 @@ export default function Checkout({ cart, dispatch, cartLoading }) {
   useEffect(() => {
     refetch()
   }, [cart])
-  console.log(cart)
 
   if (cartLoading) return <h1>LOADING CART DATA</h1>
 
